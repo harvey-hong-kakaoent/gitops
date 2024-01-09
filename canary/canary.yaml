@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: canary-rollouts-demo
-        image: particule/simplecolorapi:2.0
+        image: particule/simplecolorapi:1.0
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
@@ -31,6 +31,9 @@ kind: Service
 apiVersion: v1
 metadata:
   name: canary-service
+  annotations:
+    cloud.google.com/app-protocols: '{"http":"HTTP","https":"HTTPS"}'
+    cloud.google.com/neg: '{"ingress": true}'
 spec:
   selector:
     app: canary
@@ -40,3 +43,18 @@ spec:
     targetPort: 5000
     nodePort: 30083
   type: NodePort
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: canary-ingress
+  annotations:
+    kubernetes.io/ingress.class: "gce-internal"
+    kubernetes.io/ingress.allow-http: "true"
+    kubernetes.io/ingress.regional-static-ip-name: canary-test
+spec:
+  defaultBackend:
+    service:
+      name: canary-service
+      port:
+        number: 80
