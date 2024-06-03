@@ -3,7 +3,7 @@ kind: Rollout
 metadata:
   name: canary-rollout
 spec:
-  replicas: 8
+  replicas: 4
   revisionHistoryLimit: 2
   selector:
     matchLabels:
@@ -51,7 +51,6 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "gce-internal"
     kubernetes.io/ingress.allow-http: "true"
-    kubernetes.io/ingress.regional-static-ip-name: canary-test
 spec:
   defaultBackend:
     service:
